@@ -22,7 +22,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
         User user = userRepository2.findById(userId).get();
-        Country userCountry = user.getCountry();
+        Country userCountry = user.getOriginalCountry();
 
         //get the country and then get the service provider from the country
         CountryName countryName1 = CountryName.valueOf(countryName.toUpperCase());
@@ -86,14 +86,14 @@ public class ConnectionServiceImpl implements ConnectionService {
         if(receiver.getMaskedIp()!=null){
             String code = receiver.getMaskedIp().substring(0,3);
             CountryName countryName = CountryName.valueOf(code);
-            if(sender.getCountry().getCountryName().equals(countryName)) return sender;
+            if(sender.getOriginalCountry().getCountryName().equals(countryName)) return sender;
         }
         else{
-            if(sender.getCountry().getCountryName().equals(receiver.getCountry().getCountryName())) return sender;
+            if(sender.getOriginalCountry().getCountryName().equals(receiver.getOriginalCountry().getCountryName())) return sender;
         }
 
         try{
-            sender = connect(senderId,receiver.getCountry().getCountryName().name());
+            sender = connect(senderId,receiver.getOriginalCountry().getCountryName().name());
         }catch(Exception e){
             throw new Exception("Cannot establish communication");
         }
