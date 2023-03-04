@@ -1,6 +1,7 @@
 package com.driver.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,13 +23,13 @@ public class ServiceProvider {
 
     @ManyToMany
     @JoinColumn
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "serviceProvider", cascade = CascadeType.ALL)
-    private List<Connection> connectionList;
+    private List<Connection> connectionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "serviceProvider",cascade = CascadeType.ALL)
-    private List<Country> countryList;
+    private List<Country> countryList = new ArrayList<>();
 
 
 
@@ -37,8 +38,14 @@ public class ServiceProvider {
     public ServiceProvider() {
     }
 
-
-
+    public ServiceProvider(int id, String name, Admin admin, List<User> users, List<Connection> connectionList, List<Country> countryList) {
+        this.id = id;
+        this.name = name;
+        this.admin = admin;
+        this.users = users;
+        this.connectionList = connectionList;
+        this.countryList = countryList;
+    }
 
     //Getters and Setters
 

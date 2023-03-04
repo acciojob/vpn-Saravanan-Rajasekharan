@@ -1,6 +1,7 @@
 package com.driver.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -24,10 +25,10 @@ public class User {
 
     @ManyToMany
     @JoinColumn
-    private List<ServiceProvider> serviceProviderList;
+    private List<ServiceProvider> serviceProviderList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Connection> connectionList;
+    private List<Connection> connectionList = new ArrayList<>();
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Country originalCountry;
@@ -40,6 +41,17 @@ public class User {
     public User(){
     }
 
+    public User(int id, String username, String password, String originalIp, String maskedIp, Boolean connected, List<ServiceProvider> serviceProviderList, List<Connection> connectionList, Country originalCountry) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.originalIp = originalIp;
+        this.maskedIp = maskedIp;
+        this.connected = connected;
+        this.serviceProviderList = serviceProviderList;
+        this.connectionList = connectionList;
+        this.originalCountry = originalCountry;
+    }
 
     // Getters and Setters
 

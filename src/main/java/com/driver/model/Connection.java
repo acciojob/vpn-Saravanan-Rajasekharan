@@ -29,7 +29,11 @@ public class Connection {
 
     }
 
-
+    public Connection(int id, User user, ServiceProvider serviceProvider) {
+        this.id = id;
+        this.user = user;
+        this.serviceProvider = serviceProvider;
+    }
     //Getters and Setters
 
 

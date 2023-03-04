@@ -30,7 +30,13 @@ public class Country{
 
     }
 
-
+    public Country(int id, CountryName countryName, String code, User user, ServiceProvider serviceProvider) {
+        this.id = id;
+        this.countryName = countryName;
+        this.code = code;
+        this.user = user;
+        this.serviceProvider = serviceProvider;
+    }
     //Getters and setters
 
 

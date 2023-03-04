@@ -30,8 +30,6 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
-        List<ServiceProvider> serviceProviderList = new ArrayList<>();
-        admin.setServiceProviders(serviceProviderList);
 
         adminRepository1.save(admin);
         return admin;
@@ -43,8 +41,8 @@ public class AdminServiceImpl implements AdminService {
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setName(providerName);
         serviceProvider.setAdmin(admin);
-        List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
-        serviceProviderList.add(serviceProvider);
+
+        admin.getServiceProviders().add(serviceProvider);
 
         adminRepository1.save(admin);
 
@@ -56,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
 
         Country country = new Country();
-        CountryName countryName1 ;
+        CountryName countryName1;
 
         try{
             countryName1 = CountryName.valueOf(countryName.toUpperCase());
@@ -69,8 +67,7 @@ public class AdminServiceImpl implements AdminService {
         country.setServiceProvider(serviceProvider);
 
         //Get the country list from the service provider
-        List<Country> countryList = serviceProvider.getCountryList();
-        countryList.add(country);
+        serviceProvider.getCountryList().add(country);
 
         serviceProviderRepository1.save(serviceProvider);
 

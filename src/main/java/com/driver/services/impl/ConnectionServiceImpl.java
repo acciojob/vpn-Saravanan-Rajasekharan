@@ -22,7 +22,9 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
         User user = userRepository2.findById(userId).get();
-        Country userCountry = user.getOriginalCountry();
+        Connection connection = new Connection();
+
+        countryName = countryName.toUpperCase();
 
         //get the country and then get the service provider from the country
         CountryName countryName1 = CountryName.valueOf(countryName.toUpperCase());
@@ -31,38 +33,37 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         if(user.getConnected()) throw new Exception("Already connected");
 
-        else if(countryName1.equals(userCountry.getCountryName())) {
+        if(user.getOriginalCountry().getCountryName().equals(CountryName.valueOf(countryName))) {
             return user;
         }
-        else{
-            if(user.getServiceProviderList().size()==0){
-                throw new Exception("Unable to connect");
-            }
+        if(user.getServiceProviderList().size()==0) throw new Exception("Unable to connect");
+
             List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
             int serviceProviderId = Integer.MAX_VALUE;
 
-            for(ServiceProvider serviceProvider: serviceProviderList){
+            for(ServiceProvider serviceProvider: serviceProviderList) {
                 List<Country> countryList = serviceProvider.getCountryList();
-                for(Country country: countryList){
-                    if(country.getCountryName().equals(countryName1)){
-                        if(serviceProvider.getId()<serviceProviderId){
-                            serviceProviderId =serviceProvider.getId();
+                for (Country country : countryList) {
+                    if (country.getCountryName().equals(countryName1)) {
+                        if (serviceProvider.getId() < serviceProviderId) {
+                            serviceProviderId = serviceProvider.getId();
                         }
                     }
                 }
             }
+
             if(serviceProviderId ==Integer.MAX_VALUE) throw new Exception("Unable to connect");
 
             user.setConnected(true);
-            user.setMaskedIp(countryName1.toCode()+"."+serviceProviderId+"."+userId);
+            user.setMaskedIp(CountryName.valueOf(countryName).toCode()+"."+serviceProviderId+"."+userId);
 
-            Connection connection = new Connection();
+
             connection.setUser(user);
             connection.setServiceProvider(serviceProviderRepository2.findById(serviceProviderId).get());
             ServiceProvider serviceProvider = serviceProviderRepository2.findById(serviceProviderId).get();
             serviceProvider.getConnectionList().add(connection);
             user.getConnectionList().add(connection);
-        }
+
         userRepository2.save(user);
         return user;
     }
