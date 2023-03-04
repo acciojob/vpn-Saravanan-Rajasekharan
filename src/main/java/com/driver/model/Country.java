@@ -3,7 +3,6 @@ package com.driver.model;// Note: Do not write @Enumerated annotation above Coun
 import javax.persistence.*;
 
 @Entity
-@Table(name="country")
 public class Country{
 
     @Id
@@ -16,12 +15,9 @@ public class Country{
 
     //Mappings
 
-    @OneToOne(mappedBy = "country",cascade = CascadeType.ALL)
-    private User user;
+   User user;
 
-    @ManyToOne
-    @JoinColumn
-    private ServiceProvider serviceProvider;
+   ServiceProvider serviceProvider;
 
 
     //Constructors
