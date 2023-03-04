@@ -16,8 +16,7 @@ public class Country{
 
     //Mappings
 
-    @OneToOne
-    @JoinColumn
+    @OneToOne(mappedBy = "country",cascade = CascadeType.ALL)
     private User user;
 
     @ManyToOne

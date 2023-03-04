@@ -22,13 +22,14 @@ public class User {
 
     //Mappings
 
-    @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinColumn
     private List<ServiceProvider> serviceProviderList;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Connection> connectionList;
 
-    @OneToOne(mappedBy = "country",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Country country;
 
 
