@@ -22,12 +22,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
         User user = userRepository2.findById(userId).get();
-        Connection connection = new Connection();
+
 
         countryName = countryName.toUpperCase();
 
-        //get the country and then get the service provider from the country
-        CountryName countryName1 = CountryName.valueOf(countryName.toUpperCase());
 
 
 
@@ -40,31 +38,38 @@ public class ConnectionServiceImpl implements ConnectionService {
 
             List<ServiceProvider> serviceProviderList = user.getServiceProviderList();
             int serviceProviderId = Integer.MAX_VALUE;
+            ServiceProvider ServeProvider = null;
+            Country contry = null;
+
+            Boolean flag = false;
 
             for(ServiceProvider serviceProvider: serviceProviderList) {
                 List<Country> countryList = serviceProvider.getCountryList();
                 for (Country country : countryList) {
-                    if (country.getCountryName().equals(countryName1)) {
-                        if (serviceProvider.getId() < serviceProviderId) {
-                            serviceProviderId = serviceProvider.getId();
-                        }
+
+                    if (countryName.equalsIgnoreCase(country.getCountryName().toString())&& serviceProviderId>serviceProvider.getId()) {
+                        serviceProviderId = serviceProvider.getId();
+                        ServeProvider = serviceProvider;
+                        contry = country;
+                        flag = true;
                     }
                 }
             }
 
-            if(serviceProviderId ==Integer.MAX_VALUE) throw new Exception("Unable to connect");
+            if(!flag) throw new Exception("Unable to connect");
 
-            user.setConnected(true);
-            user.setMaskedIp(CountryName.valueOf(countryName).toCode()+"."+serviceProviderId+"."+userId);
-
+        Connection connection = new Connection();
 
             connection.setUser(user);
-            connection.setServiceProvider(serviceProviderRepository2.findById(serviceProviderId).get());
-            ServiceProvider serviceProvider = serviceProviderRepository2.findById(serviceProviderId).get();
-            serviceProvider.getConnectionList().add(connection);
-            user.getConnectionList().add(connection);
+            connection.setServiceProvider(ServeProvider);
+
+           user.setMaskedIp(contry.getCode()+"."+ServeProvider.getId()+"."+userId);
+           user.setConnected(true);
+           user.getConnectionList().add(connection);
+           ServeProvider.getConnectionList().add(connection);
 
         userRepository2.save(user);
+        serviceProviderRepository2.save(ServeProvider);
         return user;
     }
     @Override
@@ -84,17 +89,26 @@ public class ConnectionServiceImpl implements ConnectionService {
         User sender = userRepository2.findById(senderId).get();
         User receiver = userRepository2.findById(receiverId).get();
 
-        if(receiver.getMaskedIp()!=null){
-            String code = receiver.getMaskedIp().substring(0,3);
-            CountryName countryName = CountryName.valueOf(code);
-            if(sender.getOriginalCountry().getCountryName().equals(countryName)) return sender;
+        CountryName receiverCountryName = null;
+
+        if(receiver.getConnected()){
+            String receiverCountryCode;
+            String [] arr = receiver.getMaskedIp().split("\\.");
+            receiverCountryCode =arr[0];
+            for(CountryName countryName : CountryName.values()){
+                if(countryName.toCode().equals(receiverCountryCode)){
+                    receiverCountryName = countryName;
+                    break;
+                }
+            }
         }
         else{
-            if(sender.getOriginalCountry().getCountryName().equals(receiver.getOriginalCountry().getCountryName())) return sender;
+            receiverCountryName = receiver.getOriginalCountry().getCountryName();
         }
+        if(receiverCountryName.equals((sender.getOriginalCountry().getCountryName()))) return sender;
 
         try{
-            sender = connect(senderId,receiver.getOriginalCountry().getCountryName().name());
+            sender = connect(senderId,receiverCountryName.name());
         }catch(Exception e){
             throw new Exception("Cannot establish communication");
         }
