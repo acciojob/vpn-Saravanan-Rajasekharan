@@ -9,7 +9,7 @@ public class Admin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Id;
+    private int id;
 
     private String username;
 
@@ -18,7 +18,7 @@ public class Admin {
     //------------Mappings---------------//
 
     @OneToMany(mappedBy = "admin",cascade = CascadeType.ALL)
-    private List<ServiceProvider> serviceProviders = new ArrayList<>();
+    List<ServiceProvider> serviceProviders = new ArrayList<>();
 
 
 
@@ -28,7 +28,7 @@ public class Admin {
     }
 
     public Admin(int id, String username, String password, List<ServiceProvider> serviceProviders) {
-        Id = id;
+        this.id = id;
         this.username = username;
         this.password = password;
         this.serviceProviders = serviceProviders;
@@ -38,11 +38,11 @@ public class Admin {
 
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getUsername() {

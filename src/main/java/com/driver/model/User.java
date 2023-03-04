@@ -25,10 +25,10 @@ public class User {
     //Mappings
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private List<ServiceProvider> serviceProviderList = new ArrayList<>();
+    List<ServiceProvider> serviceProviderList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Connection> connectionList = new ArrayList<>();
+    List<Connection> connectionList = new ArrayList<>();
 
     @OneToOne
     Country country;
@@ -96,11 +96,11 @@ public class User {
         this.maskedIp = maskedIp;
     }
 
-    public boolean getConnected() {
+    public Boolean getConnected() {
         return connected;
     }
 
-    public void setConnected(boolean connected) {
+    public void setConnected(Boolean connected) {
         this.connected = connected;
     }
 
